@@ -68,9 +68,68 @@ kbest = which.min(MSE)
 plot(x,y)
 points(x, f(x), type="l", col=2, lwd=2)
 points(x_test, kn(kbest,"TRUE"), type="l", col=3, lwd=2)
-points(x_test, kn(25,"TRUE"), type="l", col=5, lwd=2)
 
-# Test
-k = 1
-y_pred = kn(k, "TRUE")
-MSEi = mean(sum((y_test - y_pred)^2))
+
+####### CROSS VALIDATION (4.3) #######
+
+# k-fold cross validation
+folds = 10  # ex. folds=10 means 10-fold CV
+fold_size = N/10
+
+klist = 1:200  # List of k to test
+MSE_complete = list()  # List to store the MSE list of each k-fold iteration
+for (iteration in 1:folds){
+  metaindices_test = ((iteration-1)*fold_size+1):(iteration*fold_size)  # Parenthesis are really important to separate :
+  ss1 = indices[-metaindices_test] # Choosing indices for train (ss1) and test (ss2)
+  ss2 = indices[metaindices_test]
+  # choosing partition train/test data
+  y_train=y[ss1]
+  x_train=x[ss1]
+  y_test=y[ss2]
+  x_test=x[ss2]
+  # Plotting train and test data in same figure
+  #plot(x_train, y_train)
+  #points(x_test, y_test, col=2, pch=4)
+  #browser()  # breakpoint
+  # MSE computation (test data)
+  MSE = rep(0, times=length(klist))  # I make a zeroes array with length of ksize to store MSEs
+  for (ki in klist) {
+    y_pred = kn(ki, "TRUE")
+    MSEi = mean(sum((y_test - y_pred)^2))
+    MSE[ki] = MSEi
+  }
+  MSE_complete[[iteration]] <- MSE  # Store the MSE for this k in the complete MSE list.
+}
+
+# Plotting all MSE curves
+for (i in 1:folds) {
+  if (i==1){
+    plot(klist, MSE_complete[[i]])
+  }
+  else{
+    points(klist, MSE_complete[[i]]) 
+  }
+}
+
+# Computing mean MSE curve
+MSE_mean = list()
+for (i in klist) {
+  sum = 0
+  for (j in 1:folds) {
+    sum = sum + MSE_complete[[j]][i]
+  }
+  MSE_mean[i] <- sum/folds
+}
+# Plotting mean MSE curve
+points(klist, MSE_mean, col=2)
+# Taking the best k from mean MSE curve
+k_best = which.min(MSE_mean)
+
+# Plotting best estimator
+plot(x,y)
+points(x, f(x), type="l", col=2, lwd=2)
+# Sorting x_test for plotting
+x_test = sort(x_test)
+points(x_test, kn(k_best,"TRUE"), type="l", col=3, lwd=2)
+
+####### END OF CROSS-VALIDATION (4.3) #######
