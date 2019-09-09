@@ -41,7 +41,7 @@ kn = function(k, test){
 }
 
 # Sampling data between train and test
-indices = sample(c(1:N), size=300)  # getting indices randmonly
+indices = sample(c(1:N), size=400)  # getting indices randmonly
 x_train = x[indices]
 y_train = y[indices]
 x_test = x[-indices]
@@ -121,7 +121,8 @@ for (i in klist) {
   MSE_mean[i] <- sum/folds
 }
 # Plotting mean MSE curve
-points(klist, MSE_mean, col=2)
+#points(klist, MSE_mean, col=2)
+plot(klist, MSE_mean, col=2)
 # Taking the best k from mean MSE curve
 k_best = which.min(MSE_mean)
 
@@ -131,5 +132,21 @@ points(x, f(x), type="l", col=2, lwd=2)
 # Sorting x_test for plotting
 x_test = sort(x_test)
 points(x_test, kn(k_best,"TRUE"), type="l", col=3, lwd=2)
+
+# Effect of irreducible error sigma^2
+# The error is related to the sigma somehow...
+
+mean(sum((y_test - f(x_test))^2))  # Irreducible error (?)
+
+y_theoretical = list()
+for (i in 1:length(x_test)) {
+  y_theoretical[i] <- f(x_test[i])
+}
+
+points(x_test, y_theoretical)
+
+
+length(y_theoretical)
+length(x_test)
 
 ####### END OF CROSS-VALIDATION (4.3) #######
