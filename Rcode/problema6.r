@@ -105,6 +105,19 @@ reg_sub_summary_exh$cp  #(los Cp mallows para cada mejor modelo con cada k)
 reg_sub_summary_exh$bic
 reg_sub_summary_exh$adjr2
 
+#Se pueden graficar los resultados:
+plot(reg_sub_summary_exh$cp,type="b") #El cp de mallows cambiando k
+plot(reg_sub_summary_exh$bic,type="b",col="red")  #El BIC
+plot(reg_sub_summary_exh$adjr2,type="b",col="blue")  #El R2ajustado   
+
+# Sanity check
+# The idea is to check coefficients are the same as before
+lm_best_exh = lm(y_train~x1_train+x2_train+x3_train, data=data_train)
+summary(lm_best_exh)
+
+# Prediction - MSE
+pred_exh = predict(lm_best_exh, data_test)
+mse_exh = mean((data_test$y_test - pred_exh)^2)
 
 ### PCA ###
 
