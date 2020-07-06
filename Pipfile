@@ -4,11 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+flake8 = "*"
 
 [packages]
 jupyter = "*"
 numpy = "*"
 matplotlib = "*"
+jupyterlab = "*"
+notebook = "*"
 
 [requires]
 python_version = "3.7"
